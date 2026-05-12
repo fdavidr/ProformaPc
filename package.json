@@ -1,0 +1,27 @@
+{
+  "name": "proformapc",
+  "version": "1.0.0",
+  "description": "Sistema de Cotizaciones y Ventas - Modo Local",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node build.js"
+  },
+  "pkg": {
+    "assets": [
+      "index.html",
+      "css/**/*",
+      "js/**/*",
+      "licenses.json"
+    ],
+    "targets": ["node18-win-x64"]
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-machine-id": "^1.1.12"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1",
+    "pkg": "^5.8.1"
+  }
+}

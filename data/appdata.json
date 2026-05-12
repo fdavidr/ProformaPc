@@ -1,0 +1,88 @@
+{
+  "admin": {
+    "username": "admin",
+    "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "securityQuestions": [
+      {
+        "question": "¿Cuál es el nombre de tu primera mascota?",
+        "answerHash": "afb89b9fee5ba8edd4b130801f35be00b738d4bc0fde50155b46c78394ae5c7b"
+      },
+      {
+        "question": "¿En qué ciudad naciste?",
+        "answerHash": "afb89b9fee5ba8edd4b130801f35be00b738d4bc0fde50155b46c78394ae5c7b"
+      },
+      {
+        "question": "¿Cuál es el nombre de tu madre?",
+        "answerHash": "afb89b9fee5ba8edd4b130801f35be00b738d4bc0fde50155b46c78394ae5c7b"
+      },
+      {
+        "question": "¿Cuál fue el nombre de tu primera escuela?",
+        "answerHash": "afb89b9fee5ba8edd4b130801f35be00b738d4bc0fde50155b46c78394ae5c7b"
+      },
+      {
+        "question": "¿Cuál es tu película favorita de la infancia?",
+        "answerHash": "afb89b9fee5ba8edd4b130801f35be00b738d4bc0fde50155b46c78394ae5c7b"
+      },
+      {
+        "question": "¿Cuál es el apellido de tu mejor amigo de la infancia?",
+        "answerHash": "afb89b9fee5ba8edd4b130801f35be00b738d4bc0fde50155b46c78394ae5c7b"
+      }
+    ]
+  },
+  "company": {
+    "name": "Nombre de la Empresa",
+    "slogan": "Eslogan de la empresa",
+    "nit": "",
+    "adminRecoveryEmail": "",
+    "logo": ""
+  },
+  "inventories": [
+    {
+      "id": "cochabamba",
+      "name": "Cochabamba"
+    },
+    {
+      "id": "santacruz",
+      "name": "Santa Cruz"
+    }
+  ],
+  "clients": [
+    {
+      "id": 1778530751982,
+      "name": "PROLIMPIO S.R.L.",
+      "phone": "+591 73035603",
+      "ci": "",
+      "company": ""
+    }
+  ],
+  "sellers": [],
+  "products": [],
+  "pdfHistory": [],
+  "gastos": [],
+  "currentQuoteNumber": 100000,
+  "currentSaleNumber": 100000,
+  "currentSaleNumbers": {},
+  "currentDeliveryNumber": 100000,
+  "terms": {
+    "cotizacion": [
+      "Precios sujetos a cambio sin previo aviso",
+      "Validez de la cotización: 15 días",
+      "Formas de pago: efectivo, transferencia o tarjeta",
+      "Tiempo de entrega: según disponibilidad"
+    ],
+    "notaventa": [
+      "Producto vendido sin garantía",
+      "No se aceptan devoluciones",
+      "Revisión del producto antes de retirarlo",
+      "El cliente acepta el producto en las condiciones presentadas"
+    ],
+    "notaentrega": [
+      "El receptor confirma la recepción de los productos en buen estado",
+      "Cualquier daño debe ser reportado en el momento de la entrega",
+      "Esta nota de entrega no constituye factura ni comprobante de pago",
+      "Conservar este documento para futuras consultas"
+    ]
+  },
+  "documentType": "cotizacion",
+  "lastUpdated": "2026-05-11T20:19:11.982Z"
+}
