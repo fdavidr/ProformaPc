@@ -697,13 +697,24 @@
             </div>
             <!-- Barra de filtros + totales -->
             <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
-                <!-- Fila 1: Tabs + Filtros -->
+                <!-- Fila 1: Filtros -->
                 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                    <!-- Tabs Ventas / Gastos -->
-                    <div style="display:flex; gap:8px;">
-                        <button id="tabVentas" class="btn btn-primary" onclick="switchMovimientosTab('ventas')" style="padding:7px 0; font-size:13px; width:130px;">&#x1F4B0; Ventas</button>
-                        <button id="tabGastos" class="btn btn-secondary" onclick="switchMovimientosTab('gastos')" style="padding:7px 0; font-size:13px; width:130px;">&#x1F4B8; Gastos</button>
-                        <button id="tabHistorial" class="btn btn-secondary" onclick="switchMovimientosTab('historial')" style="padding:7px 0; font-size:13px; width:130px;">&#x1F4CB; Historial</button>
+                    <!-- Tabs ocultos (controlados por el select) -->
+                    <div style="display:none;">
+                        <button id="tabVentas" class="btn btn-primary" onclick="switchMovimientosTab('ventas')">Ventas</button>
+                        <button id="tabGastos" class="btn btn-secondary" onclick="switchMovimientosTab('gastos')">Gastos</button>
+                        <button id="tabHistorial" class="btn btn-secondary" onclick="switchMovimientosTab('historial')">Historial</button>
+                    </div>
+                    <!-- Filtro operación -->
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F4CB; Operación:</label>
+                        <select id="salesOperationFilter" onchange="switchOperacionFilter(this.value)"
+                            style="padding:7px 12px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; min-width:190px; outline:none;">
+                            <option value="ventas">&#x1F4B0; Ventas</option>
+                            <option value="gastos">&#x1F4B8; Gastos</option>
+                            <option value="cotizaciones">&#x1F4CB; Cotizaciones</option>
+                            <option value="notasEntrega">&#x1F4E6; Notas de Entrega</option>
+                        </select>
                     </div>
                     <!-- Filtro ciudad -->
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -834,9 +845,12 @@
 
             <!-- Filtros -->
             <div class="stats-filters">
-                <div id="estadisticasCityRow" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <div id="estadisticasCityRow" style="display:flex; align-items:center; gap:8px;">
                     <label style="font-size:13px; font-weight:600; color:#555; white-space:nowrap;">🏛️ Ciudad:</label>
-                    <div id="estadisticasCityButtons" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+                    <select id="estadisticasCityFilter"
+                        onchange="estadisticasCity = this.value || null; renderEstadisticas();"
+                        style="padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px; background:#fff; cursor:pointer;">
+                    </select>
                 </div>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <label style="font-size:13px; font-weight:600; color:#555; white-space:nowrap;">📅 Año:</label>

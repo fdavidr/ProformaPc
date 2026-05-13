@@ -29,24 +29,19 @@ function openEstadisticas() {
 }
 
 function renderEstadisticasCityButtons() {
-    const container = document.getElementById('estadisticasCityButtons');
-    if (!container) return;
-    container.innerHTML = '';
+    const select = document.getElementById('estadisticasCityFilter');
+    if (!select) return;
 
-    const allBtn = document.createElement('button');
-    allBtn.className = 'city-selector' + (estadisticasCity === null ? ' active' : '');
-    allBtn.textContent = '🌐 Todas';
-    allBtn.onclick = () => { estadisticasCity = null; renderEstadisticasCityButtons(); renderEstadisticas(); };
-    container.appendChild(allBtn);
-
+    const currentVal = estadisticasCity;
+    select.innerHTML = '<option value="">🌐 Todas las ciudades</option>';
     (appData.inventories || []).forEach(inv => {
-        const btn = document.createElement('button');
-        btn.className = 'city-selector' + (estadisticasCity === inv.id ? ' active' : '');
-        btn.textContent = inv.name;
-        btn.dataset.city = inv.id;
-        btn.onclick = () => { estadisticasCity = inv.id; renderEstadisticasCityButtons(); renderEstadisticas(); };
-        container.appendChild(btn);
+        const opt = document.createElement('option');
+        opt.value = inv.id;
+        opt.textContent = inv.name;
+        if (currentVal === inv.id) opt.selected = true;
+        select.appendChild(opt);
     });
+    if (!currentVal) select.value = '';
 }
 
 function renderEstadisticasYearFilter() {

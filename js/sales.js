@@ -1,6 +1,7 @@
 // ==================== GESTIÓN DE VENTAS ====================
 
 let selectedSalesCity = 'cochabamba';
+let selectedSalesOperation = '';
 
 // Convertir fecha string "DD/MM/YYYY, HH:MM:SS" a timestamp
 function parseDateStr(dateStr) {
@@ -79,6 +80,11 @@ function openSales() {
 
     // Generar lista desplegable de ciudad (usa selectedSalesCity ya establecido)
     generateSalesCityFilterButtons();
+
+    // Resetear filtro de operación al abrir
+    selectedSalesOperation = 'ventas';
+    const opFilter = document.getElementById('salesOperationFilter');
+    if (opFilter) opFilter.value = 'ventas';
 
     // Establecer mes actual por defecto
     const today = new Date();
