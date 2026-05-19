@@ -2,6 +2,7 @@
 
 let selectedSalesCity = 'cochabamba';
 let selectedSalesOperation = '';
+let selectedSalesVendedor = '';
 
 // Convertir fecha string "DD/MM/YYYY, HH:MM:SS" a timestamp
 function parseDateStr(dateStr) {
@@ -86,10 +87,15 @@ function openSales() {
     const opFilter = document.getElementById('salesOperationFilter');
     if (opFilter) opFilter.value = 'ventas';
 
-    // Establecer mes actual por defecto
+    // Establecer mes y año actual por defecto
     const today = new Date();
-    const currentMonth = today.toISOString().slice(0, 7);
-    document.getElementById('salesMonthFilter').value = currentMonth;
+    populateSalesYearSelect();
+    document.getElementById('salesMonthSelect').value = String(today.getMonth() + 1).padStart(2, '0');
+    document.getElementById('salesYearSelect').value = String(today.getFullYear());
+
+    // Poblar y resetear filtro de vendedor
+    selectedSalesVendedor = '';
+    populateSalesVendedorSelect();
 
     filterSalesByMonth();
     setActiveMenuButton('salesBtn');
@@ -123,8 +129,53 @@ function filterSalesByCity(city) {
     filterSalesByMonth();
 }
 
+function getSalesSelectedMonth() {
+    const m = document.getElementById('salesMonthSelect');
+    const y = document.getElementById('salesYearSelect');
+    if (!m || !y || !m.value || !y.value) return '';
+    return `${y.value}-${m.value}`;
+}
+
+function populateSalesVendedorSelect() {
+    const container = document.getElementById('salesVendedorFilterContainer');
+    const select = document.getElementById('salesVendedorSelect');
+    if (!container || !select) return;
+    // Ocultar el filtro si el usuario es vendedor
+    if (appData.userRole === 'vendedor') {
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = 'flex';
+    select.innerHTML = '<option value="">Ver todos</option>';
+    (appData.sellers || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        opt.textContent = s.name;
+        select.appendChild(opt);
+    });
+    select.value = selectedSalesVendedor;
+}
+
+function filterSalesByVendedor(name) {
+    selectedSalesVendedor = name;
+    filterSalesByMonth();
+}
+
+function populateSalesYearSelect() {
+    const select = document.getElementById('salesYearSelect');
+    if (!select) return;
+    const currentYear = new Date().getFullYear();
+    select.innerHTML = '';
+    for (let yr = currentYear; yr >= 2020; yr--) {
+        const opt = document.createElement('option');
+        opt.value = String(yr);
+        opt.textContent = String(yr);
+        select.appendChild(opt);
+    }
+}
+
 function filterSalesByMonth() {
-    const selectedMonth = document.getElementById('salesMonthFilter').value;
+    const selectedMonth = getSalesSelectedMonth();
     const tbody = document.getElementById('salesTableBody');
     tbody.innerHTML = '';
     const isVendedor = appData.userRole === 'vendedor';
@@ -135,6 +186,8 @@ function filterSalesByMonth() {
     // Vendedor solo ve sus propios gastos
     if (appData.userRole === 'vendedor' && appData.loggedSeller) {
         filteredGastos = filteredGastos.filter(g => g.seller === appData.loggedSeller.name);
+    } else if (selectedSalesVendedor) {
+        filteredGastos = filteredGastos.filter(g => g.seller === selectedSalesVendedor);
     }
     if (selectedMonth) {
         filteredGastos = filteredGastos.filter(g => {
@@ -151,6 +204,10 @@ function filterSalesByMonth() {
         // Si es vendedor, mostrar solo sus propias ventas
         if (appData.userRole === 'vendedor' && appData.loggedSeller) {
             return entry.seller && entry.seller.name === appData.loggedSeller.name;
+        }
+        // Filtro de vendedor seleccionado
+        if (selectedSalesVendedor) {
+            return entry.seller && entry.seller.name === selectedSalesVendedor;
         }
         return true;
     });
@@ -340,7 +397,7 @@ function updateSalesTotals(sales, totals, paymentTotals) {
 }
 
 function generateSalesPDF() {
-    const selectedMonth = document.getElementById('salesMonthFilter').value;
+    const selectedMonth = getSalesSelectedMonth();
     if (!selectedMonth) {
         alert('Seleccione un mes para generar el reporte');
         return;
@@ -1215,6 +1272,9 @@ async function toggleInvoiced(saleId) {
 window.openSales = openSales;
 window.filterSalesByCity = filterSalesByCity;
 window.filterSalesByMonth = filterSalesByMonth;
+window.filterSalesByVendedor = filterSalesByVendedor;
+window.populateSalesVendedorSelect = populateSalesVendedorSelect;
+window.populateSalesYearSelect = populateSalesYearSelect;
 window.generateSalesPDF = generateSalesPDF;
 window.showAllSales = showAllSales;
 window.toggleSaleCancellation = toggleSaleCancellation;
@@ -1226,6 +1286,5 @@ window.switchMovimientosTab = switchMovimientosTab;
 window.renderGastosTable = renderGastosTable;
 
 function showAllSales() {
-    document.getElementById('salesMonthFilter').value = '';
     filterSalesByMonth();
 }

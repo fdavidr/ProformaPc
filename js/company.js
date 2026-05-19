@@ -116,15 +116,58 @@ function renderModalInventoryList() {
 
     appData.inventories.forEach(inv => {
         const row = document.createElement('div');
-        row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; background:#f8f9fa; border-radius:7px; padding:7px 12px;';
+        row.id = `invRow_${inv.id}`;
+        row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; background:#f8f9fa; border-radius:7px; padding:7px 12px; gap:8px;';
         row.innerHTML = `
-            <span style="font-weight:600; color:#2c3e50;">${inv.name}</span>
-            ${appData.inventories.length > 1
-                ? `<button onclick="deleteInventoryFromModal('${inv.id}')" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:16px; line-height:1;" title="Eliminar inventario">🗑</button>`
-                : '<span style="font-size:11px; color:#999;">Principal</span>'}
+            <span id="invName_${inv.id}" style="font-weight:600; color:#2c3e50; flex:1;">${inv.name}</span>
+            <input id="invInput_${inv.id}" type="text" value="${inv.name}" maxlength="30"
+                style="display:none; flex:1; padding:5px 8px; border:2px solid #e0e0e0; border-radius:6px; font-size:14px;"
+                onkeydown="if(event.key==='Enter') confirmRenameInventory('${inv.id}'); if(event.key==='Escape') cancelRenameInventory('${inv.id}');">
+            <div style="display:flex; gap:6px; align-items:center;">
+                <button id="invEditBtn_${inv.id}" onclick="startRenameInventory('${inv.id}')"
+                    style="background:none; border:none; color:#2980b9; cursor:pointer; font-size:15px; line-height:1;" title="Editar nombre">✏️</button>
+                <button id="invSaveBtn_${inv.id}" onclick="confirmRenameInventory('${inv.id}')"
+                    style="display:none; background:none; border:none; color:#27ae60; cursor:pointer; font-size:15px; line-height:1;" title="Guardar">✔️</button>
+                <button id="invCancelBtn_${inv.id}" onclick="cancelRenameInventory('${inv.id}')"
+                    style="display:none; background:none; border:none; color:#e67e22; cursor:pointer; font-size:15px; line-height:1;" title="Cancelar">✖️</button>
+                ${appData.inventories.length > 1
+                    ? `<button onclick="deleteInventoryFromModal('${inv.id}')" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:16px; line-height:1;" title="Eliminar inventario">🗑</button>`
+                    : '<span style="font-size:11px; color:#999;">Principal</span>'}
+            </div>
         `;
         list.appendChild(row);
     });
+}
+
+function startRenameInventory(id) {
+    document.getElementById(`invName_${id}`).style.display = 'none';
+    document.getElementById(`invInput_${id}`).style.display = 'block';
+    document.getElementById(`invInput_${id}`).focus();
+    document.getElementById(`invEditBtn_${id}`).style.display = 'none';
+    document.getElementById(`invSaveBtn_${id}`).style.display = 'block';
+    document.getElementById(`invCancelBtn_${id}`).style.display = 'block';
+}
+
+function cancelRenameInventory(id) {
+    const inv = appData.inventories.find(i => i.id === id);
+    if (!inv) return;
+    document.getElementById(`invInput_${id}`).value = inv.name;
+    document.getElementById(`invName_${id}`).style.display = 'block';
+    document.getElementById(`invInput_${id}`).style.display = 'none';
+    document.getElementById(`invEditBtn_${id}`).style.display = 'block';
+    document.getElementById(`invSaveBtn_${id}`).style.display = 'none';
+    document.getElementById(`invCancelBtn_${id}`).style.display = 'none';
+}
+
+async function confirmRenameInventory(id) {
+    const inv = appData.inventories.find(i => i.id === id);
+    if (!inv) return;
+    const newName = document.getElementById(`invInput_${id}`).value.trim();
+    if (!newName) { alert('El nombre no puede estar vacío.'); return; }
+    inv.name = newName;
+    await saveData();
+    renderModalInventoryList();
+    if (typeof generateInventoryFilters === 'function') generateInventoryFilters();
 }
 
 async function addInventoryFromModal() {
@@ -162,3 +205,6 @@ window.saveCompanySettings = saveCompanySettings;
 window.convertTransparentToWhite = convertTransparentToWhite;
 window.addInventoryFromModal = addInventoryFromModal;
 window.deleteInventoryFromModal = deleteInventoryFromModal;
+window.startRenameInventory = startRenameInventory;
+window.cancelRenameInventory = cancelRenameInventory;
+window.confirmRenameInventory = confirmRenameInventory;

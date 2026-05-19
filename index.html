@@ -625,8 +625,13 @@
     <!-- Inventory Section -->
     <div id="inventorySection" class="content-section" style="display: none;">
         <div style="padding: 20px;">
-            <div style="margin-bottom: 20px;">
-                <h2>📦 Inventario de Productos</h2>
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0;">📦 Inventario de Productos</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-success" onclick="handleProductAction()" style="white-space: nowrap;">➕ Producto</button>
+                    <button class="btn btn-primary" onclick="generateInventoryPDF()" style="white-space: nowrap;">📄 PDF</button>
+                    <button class="btn btn-success" onclick="generateInventoryExcel()" style="white-space: nowrap; background:#1d6f42;">📊 Excel</button>
+                </div>
             </div>
             
             <!-- Panel de Control Unificado -->
@@ -655,12 +660,7 @@
                         <div style="font-size: 22px; font-weight: bold; color: #27ae60;" id="totalPriceInventory">Bs 0.00</div>
                     </div>
                     
-                    <!-- Botones de Acción -->
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-success" onclick="handleProductAction()" style="white-space: nowrap;">➕ Producto</button>
-                        <button class="btn btn-primary" onclick="generateInventoryPDF()" style="white-space: nowrap;">📄 PDF</button>
-                        <button class="btn btn-success" onclick="generateInventoryExcel()" style="white-space: nowrap; background:#1d6f42;">📊 Excel</button>
-                    </div>
+
                 </div>
             </div>
             
@@ -721,11 +721,35 @@
                         <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F3DB;&#xFE0F; Ciudad:</label>
                         <div id="salesCityFilterButtons"></div>
                     </div>
-                    <!-- Filtro mes -->
+                    <!-- Filtro vendedor -->
+                    <div id="salesVendedorFilterContainer" style="display:flex; align-items:center; gap:8px;">
+                        <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F464; Vendedor:</label>
+                        <select id="salesVendedorSelect" onchange="filterSalesByVendedor(this.value)"
+                            style="padding:7px 10px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none; min-width:150px;">
+                            <option value="">Ver todos</option>
+                        </select>
+                    </div>
+                    <!-- Filtro mes/año -->
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F4C5; Mes:</label>
-                        <input type="month" id="salesMonthFilter" onchange="filterSalesByMonth()" style="padding:8px; border:1px solid #ddd; border-radius:4px; font-size:14px;">
-                        <button class="btn btn-secondary" onclick="showAllSales()" style="padding:8px 12px; font-size:13px;">Ver Todas</button>
+                        <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F4C5; Período:</label>
+                        <select id="salesMonthSelect" onchange="filterSalesByMonth()" style="padding:7px 10px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none;">
+                            <option value="">Ver todos</option>
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                        <select id="salesYearSelect" onchange="filterSalesByMonth()" style="padding:7px 10px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none;">
+                            <!-- Opciones generadas dinámicamente -->
+                        </select>
                     </div>
                 </div>
                 <!-- Fila 2: Totales centrados -->
@@ -747,25 +771,7 @@
                         <div style="font-size:20px; font-weight:bold; color:#3498db;" id="gananciaLiquidaSales">Bs 0.00</div>
                     </div>
                 </div>
-                <!-- Fila 3: Totales por método de pago -->
-                <div style="display:flex; justify-content:center; gap:24px; flex-wrap:wrap; align-items:center; margin-top:8px; padding-top:8px; border-top:1px solid #eee;">
-                    <div style="text-align:center; min-width:85px;">
-                        <div style="font-size:12px; color:#666;">💵 Efectivo</div>
-                        <div style="font-size:17px; font-weight:bold; color:#27ae60;" id="totalEfectivoSales">Bs 0.00</div>
-                    </div>
-                    <div style="text-align:center; min-width:130px;">
-                        <div style="font-size:12px; color:#666;">🏦 Transferencia</div>
-                        <div style="font-size:17px; font-weight:bold; color:#2980b9;" id="totalTransferenciaSales">Bs 0.00</div>
-                    </div>
-                    <div style="text-align:center; min-width:85px;">
-                        <div style="font-size:12px; color:#666;">🧾 Cheque</div>
-                        <div style="font-size:17px; font-weight:bold; color:#8e44ad;" id="totalChequeSales">Bs 0.00</div>
-                    </div>
-                    <div style="text-align:center; min-width:105px;">
-                        <div style="font-size:12px; color:#666;">❓ Sin Especificar</div>
-                        <div style="font-size:17px; font-weight:bold; color:#95a5a6;" id="totalSinMetodoSales">Bs 0.00</div>
-                    </div>
-                </div>
+
             </div>
 <div id="salesContent" class="table-responsive">
                     <table class="products-table">
