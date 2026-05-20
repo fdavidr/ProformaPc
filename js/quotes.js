@@ -4,38 +4,50 @@
 function generateCitySelectorButtons() {
     const container = document.getElementById('citySelectorButtons');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
-    appData.inventories.forEach((inventory, index) => {
-        const button = document.createElement('button');
-        button.className = 'btn btn-primary city-selector' + (index === 0 ? ' active' : '');
-        button.dataset.city = inventory.id;
-        button.onclick = () => selectSaleCity(inventory.id);
-        
-        // Agregar nombre completo y iniciales como data attributes
-        const initials = inventory.name.substring(0, 2).toUpperCase();
-        button.dataset.fullName = inventory.name;
-        button.dataset.initials = initials;
-        
-        // Crear span para nombre completo y span para iniciales
-        const fullNameSpan = document.createElement('span');
-        fullNameSpan.className = 'city-full-name';
-        fullNameSpan.textContent = inventory.name;
-        
-        const initialsSpan = document.createElement('span');
-        initialsSpan.className = 'city-initials';
-        initialsSpan.textContent = initials;
-        
-        button.appendChild(fullNameSpan);
-        button.appendChild(initialsSpan);
-        
-        container.appendChild(button);
-    });
-    
-    // Establecer ciudad por defecto
-    if (appData.inventories.length > 0) {
-        appData.selectedSaleCity = appData.inventories[0].id;
+
+    // Con 3 o más inventarios usar un select desplegable
+    if (appData.inventories.length >= 3) {
+        container.style.justifyContent = 'flex-start';
+        const select = document.createElement('select');
+        select.id = 'citySelectorDropdown';
+        select.style.cssText = 'padding:9px 14px; border:2px solid #3498db; border-radius:8px; font-size:15px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none; min-width:200px;';
+        appData.inventories.forEach((inventory, index) => {
+            const opt = document.createElement('option');
+            opt.value = inventory.id;
+            opt.textContent = inventory.name;
+            if (index === 0) opt.selected = true;
+            select.appendChild(opt);
+        });
+        select.addEventListener('change', () => selectSaleCity(select.value));
+        container.appendChild(select);
+        if (appData.inventories.length > 0) {
+            appData.selectedSaleCity = appData.inventories[0].id;
+        }
+    } else {
+        container.style.justifyContent = 'center';
+        appData.inventories.forEach((inventory, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-primary city-selector' + (index === 0 ? ' active' : '');
+            button.dataset.city = inventory.id;
+            button.onclick = () => selectSaleCity(inventory.id);
+            const initials = inventory.name.substring(0, 2).toUpperCase();
+            button.dataset.fullName = inventory.name;
+            button.dataset.initials = initials;
+            const fullNameSpan = document.createElement('span');
+            fullNameSpan.className = 'city-full-name';
+            fullNameSpan.textContent = inventory.name;
+            const initialsSpan = document.createElement('span');
+            initialsSpan.className = 'city-initials';
+            initialsSpan.textContent = initials;
+            button.appendChild(fullNameSpan);
+            button.appendChild(initialsSpan);
+            container.appendChild(button);
+        });
+        if (appData.inventories.length > 0) {
+            appData.selectedSaleCity = appData.inventories[0].id;
+        }
     }
 
     // Generar select para móvil
@@ -122,20 +134,30 @@ function setDocumentType(type) {
                     btn.classList.add('active');
                 }
             });
-            // Bloquear también el select móvil
-            const mobileSelect = document.getElementById('citySelectorSelect');
-            if (mobileSelect) {
-                mobileSelect.value = appData.loggedSeller.city;
-                mobileSelect.disabled = true;
-                mobileSelect.style.opacity = '0.5';
-                mobileSelect.style.cursor = 'not-allowed';
-            }
+            // Bloquear también el select de dropdown (3+) y móvil
+            ['citySelectorDropdown', 'citySelectorSelect'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) {
+                    sel.value = appData.loggedSeller.city;
+                    sel.disabled = true;
+                    sel.style.opacity = '0.5';
+                    sel.style.cursor = 'not-allowed';
+                }
+            });
         } else {
-            // Admin puede seleccionar cualquier ciudad
+            // Admin puede seleccionar cualquier inventario
             document.querySelectorAll('.city-selector').forEach(btn => {
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 btn.style.cursor = 'pointer';
+            });
+            ['citySelectorDropdown', 'citySelectorSelect'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) {
+                    sel.disabled = false;
+                    sel.style.opacity = '1';
+                    sel.style.cursor = 'pointer';
+                }
             });
         }
     } else {

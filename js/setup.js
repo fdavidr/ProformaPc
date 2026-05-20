@@ -92,6 +92,21 @@ async function saveSetup() {
         }
 
         appData.admin = { username, passwordHash, securityQuestions };
+
+        // Agregar el creador de la cuenta como vendedor por defecto
+        const defaultCity = appData.inventories.length > 0 ? appData.inventories[0].id : 'cochabamba';
+        const alreadyExists = appData.sellers.some(s => s.username === username);
+        if (!alreadyExists) {
+            appData.sellers.push({
+                id: Date.now(),
+                name: username,
+                phone: '',
+                username: username,
+                password: password,
+                city: defaultCity
+            });
+        }
+
         await saveData();
 
         document.getElementById('setupScreen').style.display = 'none';

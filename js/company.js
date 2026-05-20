@@ -4,7 +4,6 @@ function openCompanySettings() {
     document.getElementById('modalCompanyName').value = appData.company.name || '';
     document.getElementById('modalCompanySlogan').value = appData.company.slogan || '';
     document.getElementById('modalCompanyNit').value = appData.company.nit || '';
-    document.getElementById('modalAdminRecoveryEmail').value = appData.company.adminRecoveryEmail || '';
     
     if (appData.company.logo) {
         document.getElementById('logoPreview').src = appData.company.logo;
@@ -52,21 +51,11 @@ function saveCompanySettings() {
     const name = document.getElementById('modalCompanyName').value.trim();
     const slogan = document.getElementById('modalCompanySlogan').value.trim();
     const nit = document.getElementById('modalCompanyNit').value.trim();
-    const adminRecoveryEmail = document.getElementById('modalAdminRecoveryEmail').value.trim();
     const logoPreview = document.getElementById('logoPreview');
 
-    if (adminRecoveryEmail) {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(adminRecoveryEmail)) {
-            alert('Ingrese un correo electrónico válido para recuperación');
-            return;
-        }
-    }
-    
     appData.company.name = name || 'Nombre de la Empresa';
     appData.company.slogan = slogan || 'Eslogan de la empresa';
     appData.company.nit = nit;
-    appData.company.adminRecoveryEmail = adminRecoveryEmail;
     
     if (logoPreview.style.display !== 'none' && logoPreview.src) {
         appData.company.logo = logoPreview.src;

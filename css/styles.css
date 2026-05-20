@@ -772,8 +772,7 @@ input[type="file"] {
 /* ==================== SELECTORES DE CIUDAD ==================== */
 .city-selector.active {
     background: #27ae60 !important;
-    box-shadow: 0 0 15px rgba(39, 174, 96, 0.4);
-    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.4);
     font-weight: bold;
 }
 
@@ -788,7 +787,6 @@ input[type="file"] {
 
 .city-selector:hover {
     opacity: 1;
-    transform: translateY(-2px);
 }
 
 /* Mostrar nombre completo por defecto, ocultar iniciales */

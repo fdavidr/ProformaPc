@@ -3,6 +3,7 @@
 let estadisticasCity = null;
 let estadisticasYear = new Date().getFullYear();
 let estadisticasMonth = null;
+let estadisticasVendedor = null;
 const chartInstances = {};
 
 function openEstadisticas() {
@@ -14,17 +15,23 @@ function openEstadisticas() {
 
     // Si es vendedor, fijar ciudad a la suya y ocultar selector
     const cityRow = document.getElementById('estadisticasCityRow');
+    const vendedorRow = document.getElementById('estadisticasVendedorRow');
     if (appData.userRole === 'vendedor' && appData.loggedSeller) {
         estadisticasCity = appData.loggedSeller.city;
+        estadisticasVendedor = appData.loggedSeller.name;
         if (cityRow) cityRow.style.display = 'none';
+        if (vendedorRow) vendedorRow.style.display = 'none';
     } else {
         estadisticasCity = null;
+        estadisticasVendedor = null;
         if (cityRow) cityRow.style.display = '';
+        if (vendedorRow) vendedorRow.style.display = '';
     }
 
     renderEstadisticasCityButtons();
     renderEstadisticasYearFilter();
     renderEstadisticasMonthFilter();
+    renderEstadisticasVendedorFilter();
     renderEstadisticas();
 }
 
@@ -91,6 +98,21 @@ function renderEstadisticasMonthFilter() {
     select.title = estadisticasYear ? '' : 'Selecciona un año primero';
 }
 
+function renderEstadisticasVendedorFilter() {
+    const select = document.getElementById('estadisticasVendedorFilter');
+    if (!select) return;
+    const currentVal = estadisticasVendedor;
+    select.innerHTML = '<option value="">Ver todos</option>';
+    (appData.sellers || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        opt.textContent = s.name;
+        if (currentVal === s.name) opt.selected = true;
+        select.appendChild(opt);
+    });
+    if (!currentVal) select.value = '';
+}
+
 function getFilteredSalesForStats() {
     return (appData.pdfHistory || []).filter(e => {
         if (e.type !== 'notaventa' || e.cancelled) return false;
@@ -99,6 +121,7 @@ function getFilteredSalesForStats() {
             if (!(e.seller && e.seller.name === appData.loggedSeller.name)) return false;
         }
         if (estadisticasCity && e.city !== estadisticasCity) return false;
+        if (estadisticasVendedor && !(e.seller && e.seller.name === estadisticasVendedor)) return false;
         const parts = e.date.split(',')[0].trim().split('/');
         if (parts.length === 3) {
             if (estadisticasYear && parseInt(parts[2]) !== estadisticasYear) return false;
