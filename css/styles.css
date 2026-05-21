@@ -61,11 +61,10 @@ body {
     border-color: #3498db;
 }
 
-/* Conversión automática a mayúsculas para inputs de texto (excepto login y términos) */
-#app input[type="text"],
-#app input[type="email"],
-#app textarea:not(#term1):not(#term2):not(#term3):not(#term4),
-#app .autocomplete-input {
+/* Conversión a mayúsculas solo para campos Nombre y Descripción */
+#modalClientName,
+#modalSellerName,
+#modalProductDescription {
     text-transform: uppercase;
 }
 
@@ -471,6 +470,15 @@ select:focus {
     }
 }
 
+.btn-action-edit {
+    background: #7f8c8d;
+    color: white;
+}
+
+.btn-action-edit:hover {
+    background: #636e72;
+}
+
 .btn-action-danger {
     background: #e74c3c;
     color: white;
@@ -508,6 +516,7 @@ select:focus {
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 12px;
+    background: #fff;
 }
 
 .inventory-inline-input:focus {
@@ -770,23 +779,55 @@ input[type="file"] {
 }
 
 /* ==================== SELECTORES DE CIUDAD ==================== */
-.city-selector.active {
-    background: #27ae60 !important;
-    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.4);
-    font-weight: bold;
-}
-
 .city-selector {
     transition: all 0.3s ease;
+    min-width: 120px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+}
+
+.city-selector.active {
+    background: linear-gradient(135deg, #27ae60, #1e8449) !important;
+    border-color: #1a7a3c !important;
+    box-shadow: 0 4px 14px rgba(39, 174, 96, 0.45);
+    font-weight: 700;
+    color: #fff !important;
+    letter-spacing: 0.5px;
 }
 
 .city-selector:not(.active) {
-    background: #95a5a6;
-    opacity: 0.7;
+    background: #ecf0f1;
+    color: #7f8c8d;
+    border-color: #bdc3c7;
+    opacity: 0.85;
 }
 
-.city-selector:hover {
+.city-selector:not(.active):hover {
+    background: #dfe6e9;
+    color: #2c3e50;
     opacity: 1;
+    border-color: #95a5a6;
+}
+
+/* Dropdown de inventario (3+ inventarios) */
+#citySelectorDropdown,
+#citySelectorSelect {
+    text-align: center;
+    text-align-last: center;
+}
+
+#citySelectorDropdown:focus {
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.25);
+}
+
+#citySelectorDropdown option {
+    background: #fff;
+    color: #2c3e50;
+    font-weight: 600;
 }
 
 /* Mostrar nombre completo por defecto, ocultar iniciales */

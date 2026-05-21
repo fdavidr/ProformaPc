@@ -7,6 +7,18 @@ function filterSellers(query) {
     }
     
     const list = document.getElementById('sellerList');
+    const input = document.getElementById('sellerSelect');
+
+    // Si el campo está vacío, remover la validación visual y limpiar vendedor actual
+    if (!query || query.trim() === '') {
+        if (input) input.classList.remove('valid-selection');
+        appData.currentSeller = null;
+        const btn = document.getElementById('sellerActionBtn');
+        if (btn) {
+            btn.textContent = 'Agregar Vendedor';
+            btn.className = 'btn btn-success';
+        }
+    }
     list.innerHTML = '';
     
     if (!query) {

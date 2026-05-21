@@ -9,10 +9,11 @@ function generateCitySelectorButtons() {
 
     // Con 3 o más inventarios usar un select desplegable
     if (appData.inventories.length >= 3) {
-        container.style.justifyContent = 'flex-start';
+        container.style.justifyContent = 'center';
         const select = document.createElement('select');
         select.id = 'citySelectorDropdown';
-        select.style.cssText = 'padding:9px 14px; border:2px solid #3498db; border-radius:8px; font-size:15px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none; min-width:200px;';
+        select.style.cssText = 'padding:9px 14px; border:2px solid #3498db; border-radius:8px; font-size:15px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none; min-width:200px; text-align:center; text-align-last:center;';
+        select.classList.add('valid-selection');
         appData.inventories.forEach((inventory, index) => {
             const opt = document.createElement('option');
             opt.value = inventory.id;
@@ -56,7 +57,8 @@ function generateCitySelectorButtons() {
         mobileContainer.innerHTML = '';
         const select = document.createElement('select');
         select.id = 'citySelectorSelect';
-        select.style.cssText = 'width:100%; padding:9px 12px; border:2px solid #3498db; border-radius:8px; font-size:15px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none;';
+        select.style.cssText = 'width:100%; padding:9px 12px; border:2px solid #3498db; border-radius:8px; font-size:15px; font-weight:600; color:#2c3e50; background:#fff; cursor:pointer; outline:none; text-align:center; text-align-last:center;';
+        select.classList.add('valid-selection');
         appData.inventories.forEach(inventory => {
             const opt = document.createElement('option');
             opt.value = inventory.id;
@@ -169,7 +171,7 @@ function setDocumentType(type) {
 
 function selectSaleCity(city) {
     appData.selectedSaleCity = city;
-    
+
     // Actualizar botones activos
     document.querySelectorAll('.city-selector').forEach(btn => {
         btn.classList.remove('active');
@@ -178,9 +180,19 @@ function selectSaleCity(city) {
         }
     });
 
+    // Efecto visual en el dropdown (3+ inventarios)
+    const dropdown = document.getElementById('citySelectorDropdown');
+    if (dropdown) {
+        dropdown.value = city;
+        dropdown.classList.add('valid-selection');
+    }
+
     // Sincronizar select móvil
     const mobileSelect = document.getElementById('citySelectorSelect');
-    if (mobileSelect) mobileSelect.value = city;
+    if (mobileSelect) {
+        mobileSelect.value = city;
+        mobileSelect.classList.add('valid-selection');
+    }
 
     // Actualizar numeración mostrada según la ciudad seleccionada
     updateDocumentNumber();

@@ -25,6 +25,16 @@ function parseDateStr(dateStr) {
     }
 }
 
+function switchOperacionFilter(value) {
+    selectedSalesOperation = value;
+    if (value === 'gastos') {
+        switchMovimientosTab('gastos');
+    } else {
+        switchMovimientosTab('ventas');
+        filterSalesByMonth();
+    }
+}
+
 function switchMovimientosTab(tab) {
     const tabVentas = document.getElementById('tabVentas');
     const tabGastos = document.getElementById('tabGastos');
@@ -198,9 +208,13 @@ function filterSalesByMonth() {
     }
     const totalGastos = filteredGastos.reduce((sum, g) => sum + (g.amount || 0), 0);
 
-    // Filtrar solo notas de venta y por ciudad
+    // Filtrar por tipo de operación seleccionada
+    const typeMap = { 'ventas': 'notaventa', 'cotizaciones': 'cotizacion', 'notasEntrega': 'notaentrega' };
+    const targetType = typeMap[selectedSalesOperation] || 'notaventa';
+
+    // Filtrar por tipo y ciudad
     const sales = appData.pdfHistory.filter(entry => {
-        if (entry.type !== 'notaventa' || entry.city !== selectedSalesCity) return false;
+        if (entry.type !== targetType || entry.city !== selectedSalesCity) return false;
         // Si es vendedor, mostrar solo sus propias ventas
         if (appData.userRole === 'vendedor' && appData.loggedSeller) {
             return entry.seller && entry.seller.name === appData.loggedSeller.name;
@@ -214,7 +228,8 @@ function filterSalesByMonth() {
 
     if (sales.length === 0) {
         const cols = isVendedor ? 9 : 11;
-        tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align: center; padding: 30px; color: #7f8c8d;">No hay ventas registradas</td></tr>`;
+        const opLabel = { 'ventas': 'ventas', 'cotizaciones': 'cotizaciones', 'notasEntrega': 'notas de entrega' }[selectedSalesOperation] || 'registros';
+        tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align: center; padding: 30px; color: #7f8c8d;">No hay ${opLabel} registradas</td></tr>`;
         updateSalesTotals([], [0, 0, totalGastos]);
         renderGastosTable(filteredGastos);
         return;
@@ -234,7 +249,8 @@ function filterSalesByMonth() {
 
     if (filteredSales.length === 0) {
         const cols = isVendedor ? 9 : 11;
-        tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align: center; padding: 30px; color: #7f8c8d;">No hay ventas en el mes seleccionado</td></tr>`;
+        const opLabel = { 'ventas': 'ventas', 'cotizaciones': 'cotizaciones', 'notasEntrega': 'notas de entrega' }[selectedSalesOperation] || 'registros';
+        tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align: center; padding: 30px; color: #7f8c8d;">No hay ${opLabel} en el período seleccionado</td></tr>`;
         updateSalesTotals([], [0, 0, totalGastos]);
         renderGastosTable(filteredGastos);
         return;
@@ -1283,6 +1299,7 @@ window.toggleActionsMenu = toggleActionsMenu;
 window.closeActionsMenu = closeActionsMenu;
 window.toggleInvoiced = toggleInvoiced;
 window.switchMovimientosTab = switchMovimientosTab;
+window.switchOperacionFilter = switchOperacionFilter;
 window.renderGastosTable = renderGastosTable;
 
 function showAllSales() {

@@ -58,7 +58,7 @@ async function saveGasto() {
     const dateEl = document.getElementById('gastoDate');
     const notesEl = document.getElementById('gastoNotes');
 
-    const concept = conceptEl ? conceptEl.value.trim().toUpperCase() : '';
+    const concept = conceptEl ? conceptEl.value.trim() : '';
     const amount = parseFloat(amountEl ? amountEl.value : 0) || 0;
 
     if (!concept) {
@@ -90,7 +90,7 @@ async function saveGasto() {
         seller: (document.getElementById('gastoSeller') || {}).value || '',
         date: dateStr,
         paymentMethod: (document.getElementById('gastoPaymentMethod') || {}).value || 'EFECTIVO',
-        notes: notesEl ? notesEl.value.trim().toUpperCase() : ''
+        notes: notesEl ? notesEl.value.trim() : ''
     };
 
     appData.gastos.unshift(gasto);

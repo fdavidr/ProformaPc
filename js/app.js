@@ -10,9 +10,6 @@ async function init() {
     
     initPdfDatePicker();
     
-    // Inicializar conversión automática a mayúsculas
-    initUppercaseInputs();
-    
     // Mostrar selector de documentos por defecto
     const typeToggle = document.querySelector('.type-toggle');
     if (typeToggle) {
@@ -55,74 +52,6 @@ function closeMobileMenuOnNav() {
 window.openMobileMenu = openMobileMenu;
 window.closeMobileMenu = closeMobileMenu;
 window.closeMobileMenuOnNav = closeMobileMenuOnNav;
-
-// ==================== MAYÚSCULAS ====================
-// Inicializar conversión automática a mayúsculas para todos los inputs de texto
-function initUppercaseInputs() {
-    // Convertir a mayúsculas en tiempo real para inputs de texto y textareas
-    const convertToUppercase = (event) => {
-        const input = event.target;
-        const start = input.selectionStart;
-        const end = input.selectionEnd;
-        
-        input.value = input.value.toUpperCase();
-        
-        // Restaurar posición del cursor
-        input.setSelectionRange(start, end);
-    };
-    
-    // Función para verificar si un input debe ser excluido
-    const shouldExcludeInput = (input) => {
-        // Excluir campos de contraseña
-        if (input.type === 'password') return true;
-        
-        // Excluir campos del login (username y password están en #loginScreen)
-        const loginScreen = document.getElementById('loginScreen');
-        if (loginScreen && loginScreen.contains(input)) return true;
-        
-        // Excluir textareas de términos y condiciones
-        if (input.id && ['term1', 'term2', 'term3', 'term4'].includes(input.id)) return true;
-        
-        return false;
-    };
-    
-    // Agregar listener a todos los inputs de texto existentes
-    const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
-    textInputs.forEach(input => {
-        if (!shouldExcludeInput(input)) {
-            input.addEventListener('input', convertToUppercase);
-        }
-    });
-    
-    // Observer para inputs dinámicos que se agreguen después
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1) { // Element node
-                    // Si el nodo es un input o textarea
-                    if ((node.tagName === 'INPUT' && (node.type === 'text' || node.type === 'email')) || node.tagName === 'TEXTAREA') {
-                        if (!shouldExcludeInput(node)) {
-                            node.addEventListener('input', convertToUppercase);
-                        }
-                    }
-                    // Buscar inputs dentro del nodo agregado
-                    const inputs = node.querySelectorAll('input[type="text"], input[type="email"], textarea');
-                    inputs.forEach(input => {
-                        if (!shouldExcludeInput(input)) {
-                            input.addEventListener('input', convertToUppercase);
-                        }
-                    });
-                }
-            });
-        });
-    });
-    
-    // Observar cambios en el documento
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-}
 
 // Inicializar selector de fecha para PDF
 function initPdfDatePicker() {

@@ -95,7 +95,7 @@ function loadInventoryData() {
             <td>Bs ${costTotal.toFixed(2)}</td>
             <td>Bs ${priceTotal.toFixed(2)}</td>
             <td style="white-space: nowrap;">
-                <button class="btn-action-icon btn-action-success" onclick="saveInventoryRowChanges(${index}, this)" title="Guardar cambios">💾</button>
+                <button class="btn-action-icon btn-action-edit" onclick="editInventoryRow(${index}, this)" title="Editar">✏️</button>
                 <button class="btn-action-icon btn-action-danger" onclick="deleteProductFromInventory(${index})" title="Eliminar">🗑️</button>
             </td>
         `;
@@ -106,15 +106,15 @@ function loadInventoryData() {
         row.querySelector('.inventory-cost').value = cost.toFixed(2);
         row.querySelector('.inventory-price').value = price.toFixed(2);
 
-        // Agregar listeners para detectar cambios
-        const saveButton = row.querySelector('.btn-action-success');
-        const inputs = row.querySelectorAll('.inventory-inline-input');
-        
-        inputs.forEach(input => {
+        // Detectar cambios inline: cambiar ✏️ a 💾
+        const actionBtn = row.querySelector('.btn-action-icon:not(.btn-action-danger)');
+        row.querySelectorAll('.inventory-inline-input').forEach(input => {
             input.addEventListener('input', () => {
-                if (saveButton && !saveButton.classList.contains('btn-action-modified')) {
-                    saveButton.classList.add('btn-action-modified');
-                    saveButton.title = '¡Hay cambios sin guardar!';
+                if (actionBtn && actionBtn.classList.contains('btn-action-edit')) {
+                    actionBtn.className = 'btn-action-icon btn-action-success';
+                    actionBtn.textContent = '💾';
+                    actionBtn.title = 'Guardar cambios';
+                    actionBtn.onclick = () => saveInventoryRowChanges(index, actionBtn);
                 }
             });
         });
@@ -221,14 +221,21 @@ async function saveInventoryRowChanges(index, buttonElement) {
         buttonElement.title = 'Guardado exitosamente';
         buttonElement.disabled = false;
         setTimeout(() => {
-            buttonElement.textContent = '💾';
-            buttonElement.title = 'Guardar cambios';
+            buttonElement.textContent = '✏️';
+            buttonElement.title = 'Editar';
+            buttonElement.className = 'btn-action-icon btn-action-edit';
+            buttonElement.onclick = () => editInventoryRow(index, buttonElement);
         }, 1500);
     } else {
         // En caso de fallo, recargar tabla para reflejar estado real
         loadInventoryData();
         alert('No se pudo guardar los cambios. Revisa tu conexión e intenta de nuevo.');
     }
+}
+
+function editInventoryRow(index, btn) {
+    appData.currentProduct = appData.products[index];
+    handleProductAction();
 }
 
 async function deleteProductFromInventory(index) {
@@ -476,6 +483,7 @@ function generateInventoryExcel() {
 window.openInventory = openInventory;
 window.filterInventoryByCity = filterInventoryByCity;
 window.loadInventoryData = loadInventoryData;
+window.editInventoryRow = editInventoryRow;
 window.saveInventoryRowChanges = saveInventoryRowChanges;
 window.deleteProductFromInventory = deleteProductFromInventory;
 window.generateInventoryPDF = generateInventoryPDF;
