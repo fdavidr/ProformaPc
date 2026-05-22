@@ -83,7 +83,7 @@ function generateSalesCityFilterButtons() {
 
 function openSales() {
     // Establecer ciudad antes de generar el select para que quede preseleccionada
-    if (appData.userRole === 'vendedor' && appData.loggedSeller) {
+    if (appData.userRole === 'vendedor' && appData.loggedSeller && appData.loggedSeller.city !== 'all') {
         selectedSalesCity = appData.loggedSeller.city;
     } else {
         selectedSalesCity = appData.inventories.length > 0 ? appData.inventories[0].id : 'cochabamba';
@@ -116,10 +116,10 @@ function openSales() {
     document.getElementById('inventorySection').style.display = 'none';
     document.getElementById('salesSection').style.display = 'block';
 
-    // Si es vendedor, deshabilitar el select de ciudad
+    // Si es vendedor con inventario específico, deshabilitar el select de ciudad
     const citySelect = document.getElementById('salesCitySelect');
     if (citySelect) {
-        if (appData.userRole === 'vendedor' && appData.loggedSeller) {
+        if (appData.userRole === 'vendedor' && appData.loggedSeller && appData.loggedSeller.city !== 'all') {
             citySelect.value = appData.loggedSeller.city;
             citySelect.disabled = true;
             citySelect.style.opacity = '0.5';
@@ -901,7 +901,7 @@ async function toggleSaleCancellation(saleId) {
                     if (product && product.stock) {
                         // Descontar stock del inventario correspondiente
                         const currentStock = product.stock[sale.city] || 0;
-                        product.stock[sale.city] = Math.max(0, currentStock - item.quantity);
+                        product.stock[sale.city] = currentStock - item.quantity;
                     }
                 });
             }

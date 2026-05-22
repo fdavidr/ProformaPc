@@ -124,8 +124,8 @@ function setDocumentType(type) {
         
         citySelector.style.display = 'block';
         
-        // Si es vendedor, bloquear selección y establecer su ciudad
-        if (appData.userRole === 'vendedor' && appData.loggedSeller) {
+        // Si es vendedor con inventario específico, bloquear selección
+        if (appData.userRole === 'vendedor' && appData.loggedSeller && appData.loggedSeller.city !== 'all') {
             appData.selectedSaleCity = appData.loggedSeller.city;
             document.querySelectorAll('.city-selector').forEach(btn => {
                 btn.classList.remove('active');

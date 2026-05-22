@@ -185,7 +185,7 @@ async function generatePDF() {
                 if (product) {
                     if (!product.stock) product.stock = {};
                     const previousStock = product.stock[cityId] || 0;
-                    product.stock[cityId] = Math.max(0, previousStock - item.quantity);
+                    product.stock[cityId] = previousStock - item.quantity;
                 }
             });
         }

@@ -98,11 +98,17 @@ function handleSellerAction() {
     openModal('sellerModal');
 }
 
-// Generar opciones de ciudad dinámicamente según inventarios disponibles
+// Generar opciones de inventario dinámicamente según inventarios disponibles
 function generateCityOptions() {
     const select = document.getElementById('modalSellerCity');
     select.innerHTML = '';
     
+    // Opción para todos los inventarios
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = 'Todos los inventarios';
+    select.appendChild(allOption);
+
     appData.inventories.forEach(inventory => {
         const option = document.createElement('option');
         option.value = inventory.id;
