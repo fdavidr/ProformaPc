@@ -10,7 +10,9 @@ let appData = {
         slogan: 'Eslogan de la empresa',
         nit: '',
         adminRecoveryEmail: '',
-        logo: ''
+        logo: '',
+        pdfHeaderBgColor: '#7037CD',
+        pdfHeaderTextColor: '#FFFFFF'
     },
     inventories: [
         { id: 'cochabamba', name: 'Cochabamba' },

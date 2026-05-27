@@ -332,6 +332,17 @@ function renderQuoteItems() {
     // Asegurar que el array existe
     if (!Array.isArray(appData.currentQuoteItems)) {
         appData.currentQuoteItems = [];
+    }
+
+    if (appData.currentQuoteItems.length === 0) {
+        const colCount = 9;
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `<td colspan="${colCount}" style="text-align:center; padding:32px 16px; color:#aab0bb;">
+            <div style="font-size:36px; margin-bottom:10px;">🛒</div>
+            <div style="font-size:14px; font-weight:500;">Aún no hay productos</div>
+            <div style="font-size:12px; margin-top:4px;">Buscá un producto arriba y hacé clic en <strong>Agregar</strong></div>
+        </td>`;
+        tbody.appendChild(emptyRow);
         return;
     }
 

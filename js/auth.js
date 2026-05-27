@@ -1,5 +1,20 @@
 // ==================== AUTENTICACIÓN ====================
 
+function togglePasswordVisibility() {
+    const pwd = document.getElementById('password');
+    const btn = document.getElementById('togglePasswordBtn');
+    if (!pwd || !btn) return;
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        btn.textContent = '🙈';
+        btn.style.color = '#3498db';
+    } else {
+        pwd.type = 'password';
+        btn.textContent = '👁';
+        btn.style.color = '#aaa';
+    }
+}
+
 function initLogin() {
     // Limpiar listener anterior para evitar duplicados si initLogin se llama más de una vez
     const form = document.getElementById('loginForm');

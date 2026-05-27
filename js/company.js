@@ -13,6 +13,8 @@ function openCompanySettings() {
         preview.style.display = 'none';
         preview.src = '';
     }
+    document.getElementById('modalPdfHeaderBg').value   = appData.company.pdfHeaderBgColor   || '#7037CD';
+    document.getElementById('modalPdfHeaderText').value = appData.company.pdfHeaderTextColor || '#FFFFFF';
     renderModalInventoryList();
     openModal('companyModal');
 }
@@ -56,6 +58,8 @@ function saveCompanySettings() {
     appData.company.name = name || 'Nombre de la Empresa';
     appData.company.slogan = slogan || 'Eslogan de la empresa';
     appData.company.nit = nit;
+    appData.company.pdfHeaderBgColor   = document.getElementById('modalPdfHeaderBg').value   || '#7037CD';
+    appData.company.pdfHeaderTextColor = document.getElementById('modalPdfHeaderText').value || '#FFFFFF';
     
     if (logoPreview.style.display !== 'none' && logoPreview.src) {
         appData.company.logo = logoPreview.src;

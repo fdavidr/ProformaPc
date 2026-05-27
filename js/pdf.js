@@ -1,5 +1,12 @@
 // ==================== GENERACIÓN DE PDF ====================
 
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+        ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+        : { r: 112, g: 55, b: 205 };
+}
+
 // Convierte una URL de Storage a base64, la guarda en cache y la asigna al producto.
 async function resolveStorageImagesForPDF(items) {
     for (const item of items) {
@@ -371,20 +378,22 @@ function addPDFSellerInfo(doc, margin, yPos) {
 }
 
 function addPDFProductsTable(doc, margin, yPos, pageWidth, pageHeight) {
-    // Columnas: # | Código | IMG | Descripción | Cant. | Descuento | Precio U. | Subtotal
-    // Separadores (offset desde margin): 6, 24, 50, 98, 110, 130, 152, 180(=pageRight)
+    // Columnas: # | Código | IMG | Descripción | Cant. | Desc. | Precio U. | Subtotal
+    // Separadores (offset desde margin): 6, 24, 50, 98, 110, 125, 152, 180(=pageRight)
+    const _bgColor   = hexToRgb(appData.company.pdfHeaderBgColor   || '#7037CD');
+    const _textColor = hexToRgb(appData.company.pdfHeaderTextColor || '#FFFFFF');
     doc.setFont(undefined, 'bold');
-    doc.setFillColor(112, 55, 205);
+    doc.setFillColor(_bgColor.r, _bgColor.g, _bgColor.b);
     doc.rect(margin, yPos, pageWidth - 2 * margin, 7, 'FD');
 
-    doc.setTextColor(255, 255, 255);
+    doc.setTextColor(_textColor.r, _textColor.g, _textColor.b);
     doc.text('#',           margin + 2,   yPos + 5);
     doc.text('Código',      margin + 7,   yPos + 5);
     doc.text('IMG',         margin + 33,  yPos + 5);
     doc.text('Descripción', margin + 52,  yPos + 5);
     doc.text('Cant.',       margin + 99,  yPos + 5);
-    doc.text('Descuento',   margin + 111, yPos + 5);
-    doc.text('Precio U.',   margin + 131, yPos + 5);
+    doc.text('Desc.',       margin + 111, yPos + 5);
+    doc.text('Precio U.',   margin + 126, yPos + 5);
     doc.text('Subtotal',    pageWidth - margin - 2, yPos + 5, { align: 'right' });
 
     yPos += 10;
@@ -441,7 +450,7 @@ function addPDFProductsTable(doc, margin, yPos, pageWidth, pageHeight) {
         const displayPrice = (item.discount && item.discount > 0 && item.quantity > 0)
             ? item.subtotal / item.quantity
             : item.price;
-        doc.text('Bs ' + displayPrice.toFixed(2), margin + 131, textYCenter);
+        doc.text('Bs ' + displayPrice.toFixed(2), margin + 126, textYCenter);
 
         // Subtotal
         doc.text('Bs ' + item.subtotal.toFixed(2), pageWidth - margin - 2, textYCenter, { align: 'right' });
@@ -458,7 +467,7 @@ function addPDFProductsTable(doc, margin, yPos, pageWidth, pageHeight) {
         doc.line(margin +  50, yPos - 3, margin +  50, yPos + rowHeight - 3); // IMG | Desc
         doc.line(margin +  98, yPos - 3, margin +  98, yPos + rowHeight - 3); // Desc | Cant
         doc.line(margin + 110, yPos - 3, margin + 110, yPos + rowHeight - 3); // Cant | Desc
-        doc.line(margin + 130, yPos - 3, margin + 130, yPos + rowHeight - 3); // Desc | PU
+        doc.line(margin + 125, yPos - 3, margin + 125, yPos + rowHeight - 3); // Desc | PU
         doc.line(margin + 152, yPos - 3, margin + 152, yPos + rowHeight - 3); // PU | Sub
 
         yPos += rowHeight;
@@ -476,11 +485,13 @@ function addPDFProductsTable(doc, margin, yPos, pageWidth, pageHeight) {
 
 function addPDFProductsTableDelivery(doc, margin, yPos, pageWidth, pageHeight) {
     // Header de la tabla para nota de entrega con columna de imagen
+    const _bgColor   = hexToRgb(appData.company.pdfHeaderBgColor   || '#7037CD');
+    const _textColor = hexToRgb(appData.company.pdfHeaderTextColor || '#FFFFFF');
     doc.setFont(undefined, 'bold');
-    doc.setFillColor(112, 55, 205);
+    doc.setFillColor(_bgColor.r, _bgColor.g, _bgColor.b);
     doc.rect(margin, yPos, pageWidth - 2 * margin, 7, 'FD');
     
-    doc.setTextColor(255, 255, 255);
+    doc.setTextColor(_textColor.r, _textColor.g, _textColor.b);
     doc.text('#', margin + 2, yPos + 5);
     doc.text('Código', margin + 10, yPos + 5);
     doc.text('IMG', margin + 33, yPos + 5);
