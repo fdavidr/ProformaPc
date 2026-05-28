@@ -306,12 +306,6 @@ function filterSalesByMonth() {
         const cancelButtonText = isCancelled ? 'Validar' : 'Anular';
         const cancelButtonClass = isCancelled ? 'toggle-cancel validated' : 'toggle-cancel';
         
-        // Determinar si está facturada
-        const isInvoiced = sale.invoiced === true;
-        const invoiceButtonIcon = isInvoiced ? '✓' : '📄';
-        const invoiceButtonText = isInvoiced ? 'Facturado' : 'Marcar Facturado';
-        const invoiceButtonClass = isInvoiced ? 'mark-invoiced invoiced' : 'mark-invoiced';
-
         // Agregar clase visual si está anulada
         if (isCancelled) {
             tr.classList.add('cancelled-sale');
@@ -339,9 +333,6 @@ function filterSalesByMonth() {
                         </button>
                         <button class="${cancelButtonClass}" onclick="toggleSaleCancellation(${sale.id}); closeActionsMenu(${sale.id})">
                             ${cancelButtonIcon} ${cancelButtonText}
-                        </button>
-                        <button class="${invoiceButtonClass}" onclick="toggleInvoiced(${sale.id}); closeActionsMenu(${sale.id})">
-                            ${invoiceButtonIcon} ${invoiceButtonText}
                         </button>
                     </div>
                 </div>

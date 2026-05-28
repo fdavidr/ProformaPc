@@ -40,7 +40,7 @@ function renderEstadisticasCityButtons() {
     if (!select) return;
 
     const currentVal = estadisticasCity;
-    select.innerHTML = '<option value="">🌐 Todas las ciudades</option>';
+    select.innerHTML = '<option value="">🌐 Todos los inventarios</option>';
     (appData.inventories || []).forEach(inv => {
         const opt = document.createElement('option');
         opt.value = inv.id;
@@ -185,7 +185,7 @@ function renderTopProducts(sales) {
     sales.forEach(sale => {
         (sale.items || []).forEach(item => {
             const product = appData.products.find(p => p.id === item.id);
-            const name = product ? product.name : (item.name || `Prod. #${item.id}`);
+            const name = product ? product.description : (item.product?.description || item.description || `Prod. #${item.id}`);
             counts[name] = (counts[name] || 0) + (item.quantity || 0);
         });
     });
