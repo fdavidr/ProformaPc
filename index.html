@@ -464,66 +464,182 @@
     
     <!-- Company Settings Modal -->
     <div id="companyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Configuración de la Empresa</h3>
+        <div class="settings-modal-content">
+            <!-- Header -->
+            <div class="settings-modal-header">
+                <div class="settings-modal-title">
+                    <div class="settings-header-icon">⚙️</div>
+                    <div>
+                        <h2>Configuración</h2>
+                        <p>Personaliza tu sistema</p>
+                    </div>
+                </div>
+                <button class="settings-close-btn" onclick="closeModal('companyModal')">✕</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Nombre de la Empresa</label>
-                    <input type="text" id="modalCompanyName">
-                </div>
-                <div class="form-group">
-                    <label>Eslogan</label>
-                    <input type="text" id="modalCompanySlogan">
-                </div>
-                <div class="form-group">
-                    <label>NIT</label>
-                    <input type="text" id="modalCompanyNit">
-                </div>
-                <div class="form-group" style="border-top: 2px solid #f0f0f0; padding-top: 16px; margin-top: 4px;">
-                    <label style="font-weight:700; color:#2c3e50; font-size:14px;">🎨 Encabezado de tabla PDF</label>
-                    <div style="display:flex; gap:24px; margin-top:10px; align-items:center;">
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <label style="font-size:13px; color:#555; margin:0;">Fondo:</label>
-                            <input type="color" id="modalPdfHeaderBg" value="#7037CD" style="width:44px; height:34px; border:1.5px solid #ddd; border-radius:6px; padding:2px; cursor:pointer;">
+            <!-- Body -->
+            <div class="settings-modal-body">
+                <!-- Tabs nav -->
+                <nav class="settings-tabs">
+                    <button class="settings-tab active" onclick="switchSettingsTab('empresa', this)">
+                        <span class="stab-icon">🏢</span>
+                        <span class="stab-label">Empresa</span>
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('diseno', this)">
+                        <span class="stab-icon">🎨</span>
+                        <span class="stab-label">Diseño PDF</span>
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('inventarios', this)">
+                        <span class="stab-icon">🏪</span>
+                        <span class="stab-label">Inventarios</span>
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('respaldo', this)">
+                        <span class="stab-icon">💾</span>
+                        <span class="stab-label">Respaldo</span>
+                    </button>
+                </nav>
+                <!-- Panels -->
+                <div class="settings-panels">
+
+                    <!-- EMPRESA -->
+                    <div id="settingsTab-empresa" class="settings-panel active">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="scard-icon">🏢</div>
+                                <div>
+                                    <div class="scard-title">Información de la Empresa</div>
+                                    <div class="scard-desc">Datos que aparecerán en tus documentos generados</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="sfield">
+                                    <label>Nombre de la Empresa</label>
+                                    <input type="text" id="modalCompanyName" placeholder="Ej: Mi Empresa S.R.L.">
+                                </div>
+                                <div class="sfield">
+                                    <label>Eslogan</label>
+                                    <input type="text" id="modalCompanySlogan" placeholder="Ej: Calidad y confianza">
+                                </div>
+                                <div class="sfield">
+                                    <label>NIT</label>
+                                    <input type="text" id="modalCompanyNit" placeholder="Ej: 123456789">
+                                </div>
+                            </div>
                         </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <label style="font-size:13px; color:#555; margin:0;">Letra:</label>
-                            <input type="color" id="modalPdfHeaderText" value="#ffffff" style="width:44px; height:34px; border:1.5px solid #ddd; border-radius:6px; padding:2px; cursor:pointer;">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="scard-icon">🖼️</div>
+                                <div>
+                                    <div class="scard-title">Logo de la Empresa</div>
+                                    <div class="scard-desc">Imagen que aparece en los documentos (máx. 500KB)</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="sfield-logo">
+                                    <div class="slogo-preview-wrap" id="logoPreviewWrap">
+                                        <img id="logoPreview" style="display:none; max-height:80px; max-width:180px; border-radius:6px;">
+                                        <div id="logoPlaceholder" class="slogo-placeholder">📷<br>Sin logo</div>
+                                    </div>
+                                    <div style="display:flex; flex-direction:column; gap:8px;">
+                                        <label for="logoInput" class="slogo-upload-btn">📁 Cargar Logo</label>
+                                        <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none;">
+                                        <button class="slogo-remove-btn" onclick="removeLogo()" id="logoRemoveBtn" style="display:none;">🗑 Quitar logo</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Logo</label>
-                    <label for="logoInput" class="file-input-label">📁 Cargar Logo</label>
-                    <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
-                    <img id="logoPreview" style="max-width: 200px; margin-top: 10px; display: none;">
-                </div>
-                <!-- Exportar / Importar datos -->
-                <div class="form-group" style="border-top: 2px solid #f0f0f0; padding-top: 16px; margin-top: 4px;">
-                    <label style="font-weight: 700; color: #2c3e50; font-size: 14px;">💾 Copia de Seguridad</label>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn btn-primary" onclick="exportData()" style="flex:1;">📤 Exportar datos</button>
-                        <button class="btn btn-secondary" onclick="document.getElementById('importFileInput').click()" style="flex:1;">📥 Importar datos</button>
+
+                    <!-- DISEÑO PDF -->
+                    <div id="settingsTab-diseno" class="settings-panel">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="scard-icon">🎨</div>
+                                <div>
+                                    <div class="scard-title">Encabezado de Tabla PDF</div>
+                                    <div class="scard-desc">Personaliza los colores del encabezado en tus documentos</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div class="scolor-row">
+                                    <div class="scolor-item">
+                                        <label>Color de Fondo</label>
+                                        <div class="scolor-picker-wrap">
+                                            <input type="color" id="modalPdfHeaderBg" value="#7037CD" oninput="updatePdfPreview()">
+                                            <span class="scolor-label" id="bgColorLabel">#7037CD</span>
+                                        </div>
+                                    </div>
+                                    <div class="scolor-item">
+                                        <label>Color de Letra</label>
+                                        <div class="scolor-picker-wrap">
+                                            <input type="color" id="modalPdfHeaderText" value="#ffffff" oninput="updatePdfPreview()">
+                                            <span class="scolor-label" id="textColorLabel">#ffffff</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="scolor-preview-label">Vista previa del encabezado:</div>
+                                <div class="scolor-preview" id="pdfHeaderPreview">
+                                    <span>Producto &nbsp;|&nbsp; Cantidad &nbsp;|&nbsp; Precio &nbsp;|&nbsp; Subtotal</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <p style="font-size:12px; color:#888; margin: 6px 0 0;">Exportar guarda todos los datos en un archivo .json. Importar reemplaza los datos actuales.</p>
-                </div>
-                <!-- Gestión de Inventarios -->
-                <div class="form-group" style="border-top: 2px solid #f0f0f0; padding-top: 16px; margin-top: 4px;">
-                    <label style="font-weight: 700; color: #2c3e50; font-size: 14px;">🏪 Inventarios (<span id="modalInventoryCount">0</span>/4)</label>
-                    <div id="modalInventoryList" style="display: flex; flex-direction: column; gap: 6px; margin: 10px 0;"></div>
-                    <div id="modalAddInventoryRow" style="display: flex; gap: 8px; margin-top: 8px;">
-                        <input type="text" id="modalNewInventoryName" placeholder="Ej: La Paz, Tarija..." maxlength="30"
-                            style="flex: 1; padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;"
-                            onkeydown="if(event.key==='Enter') addInventoryFromModal()">
-                        <button class="btn btn-success" onclick="addInventoryFromModal()" style="white-space: nowrap;">➕ Agregar</button>
+
+                    <!-- INVENTARIOS -->
+                    <div id="settingsTab-inventarios" class="settings-panel">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="scard-icon">🏪</div>
+                                <div>
+                                    <div class="scard-title">Gestión de Inventarios &nbsp;<span id="modalInventoryCount" class="sinv-badge">0</span><span class="scard-desc" style="display:inline;">/4</span></div>
+                                    <div class="scard-desc">Administra tus almacenes o sucursales</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <div id="modalInventoryList" style="display:flex; flex-direction:column; gap:8px;"></div>
+                                <div id="modalAddInventoryRow" style="display:flex; gap:8px; margin-top:4px;">
+                                    <input type="text" id="modalNewInventoryName" placeholder="Ej: La Paz, Tarija..." maxlength="30"
+                                        class="sinv-input"
+                                        onkeydown="if(event.key==='Enter') addInventoryFromModal()">
+                                    <button class="btn btn-success" onclick="addInventoryFromModal()" style="white-space:nowrap; padding:9px 16px; border-radius:9px;">➕ Agregar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- RESPALDO -->
+                    <div id="settingsTab-respaldo" class="settings-panel">
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="scard-icon">📤</div>
+                                <div>
+                                    <div class="scard-title">Exportar Datos</div>
+                                    <div class="scard-desc">Descarga todos tus datos en un archivo .json de respaldo</div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <button class="sbackup-btn sbackup-export" onclick="exportData()">📤 Exportar datos ahora</button>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="scard-icon">📥</div>
+                                <div>
+                                    <div class="scard-title">Importar Datos</div>
+                                    <div class="scard-desc">Restaura desde un archivo exportado. <strong style="color:#e74c3c;">Reemplaza todos los datos actuales.</strong></div>
+                                </div>
+                            </div>
+                            <div class="settings-card-body">
+                                <button class="sbackup-btn sbackup-import" onclick="document.getElementById('importFileInput').click()">📥 Seleccionar archivo de respaldo</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            <div class="modal-footer">
+            <!-- Footer -->
+            <div class="settings-modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('companyModal')">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveCompanySettings()">Guardar</button>
+                <button class="settings-save-btn" onclick="saveCompanySettings()">💾 Guardar Cambios</button>
             </div>
         </div>
     </div>
@@ -732,7 +848,7 @@
                     </div>
                     <!-- Filtro ciudad -->
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F3DB;&#xFE0F; Ciudad:</label>
+                        <label style="font-size:13px; font-weight:600; color:#555; margin:0; white-space:nowrap;">&#x1F3DB;&#xFE0F; Inventario:</label>
                         <div id="salesCityFilterButtons"></div>
                     </div>
                     <!-- Filtro vendedor -->
@@ -815,7 +931,7 @@
                                 <th>Concepto</th>
                                 <th>Categoría</th>
                                 <th>Monto</th>
-                                <th>Ciudad</th>
+                                <th>Inventario</th>
                                 <th>Vendedor</th>
                                 <th>Fecha</th>
                                 <th>Método Pago</th>
@@ -866,7 +982,7 @@
             <!-- Filtros -->
             <div class="stats-filters">
                 <div id="estadisticasCityRow" style="display:flex; align-items:center; gap:8px;">
-                    <label style="font-size:13px; font-weight:600; color:#555; white-space:nowrap;">🏛️ Ciudad:</label>
+                    <label style="font-size:13px; font-weight:600; color:#555; white-space:nowrap;">🏛️ Inventario:</label>
                     <select id="estadisticasCityFilter"
                         onchange="estadisticasCity = this.value || null; renderEstadisticas();"
                         style="padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:13px; background:#fff; cursor:pointer;">

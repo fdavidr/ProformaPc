@@ -66,7 +66,7 @@ function loadInventoryData() {
         const cost = product.cost || 0;
         const price = product.price || 0;
         const costTotal = stock * cost;
-        const priceTotal = stock * price;
+        const priceTotal = Math.max(0, stock * price);
 
         totalCost += costTotal;
         totalPrice += priceTotal;
@@ -138,7 +138,7 @@ function updateInventoryTotals() {
         const cost = product.cost || 0;
         const price = product.price || 0;
         totalCost += stock * cost;
-        totalPrice += stock * price;
+        totalPrice += Math.max(0, stock * price);
     });
     document.getElementById('totalCostInventory').textContent = `Bs ${totalCost.toFixed(2)}`;
     document.getElementById('totalPriceInventory').textContent = `Bs ${totalPrice.toFixed(2)}`;
@@ -380,6 +380,7 @@ function generateInventoryPDF() {
     doc.setFontSize(8);
 
     // Productos
+    const rowHeight = 9;
     appData.products.forEach((product, index) => {
         if (yPos > pageHeight - 30) {
             doc.addPage();
@@ -392,37 +393,44 @@ function generateInventoryPDF() {
         const cost = product.cost || 0;
         const price = product.price || 0;
         const costTotal = stock * cost;
-        const priceTotal = stock * price;
+        const priceTotal = Math.max(0, stock * price);
+
+        // Fondo alternado para mejor legibilidad
+        if (index % 2 === 0) {
+            doc.setFillColor(248, 249, 250);
+            doc.rect(margin, yPos, pageWidth - 2 * margin, rowHeight, 'F');
+        }
+
+        // Texto centrado verticalmente dentro del row
+        const textY = yPos + rowHeight * 0.62;
 
         xPos = margin + 2;
-        doc.text(product.code || '—', xPos, yPos);
+        doc.text(product.code || '—', xPos, textY);
         xPos += colWidths.code;
-        
+
         const description = product.description;
         if (description.length > 22) {
-            doc.text(description.substring(0, 22) + '...', xPos, yPos);
+            doc.text(description.substring(0, 22) + '...', xPos, textY);
         } else {
-            doc.text(description, xPos, yPos);
+            doc.text(description, xPos, textY);
         }
         xPos += colWidths.desc;
-        
-        doc.text(stock.toFixed(2), xPos, yPos);
+
+        doc.text(stock.toFixed(2), xPos, textY);
         xPos += colWidths.stock;
-        doc.text(cost.toFixed(2), xPos, yPos);
+        doc.text(cost.toFixed(2), xPos, textY);
         xPos += colWidths.cost;
-        doc.text(price.toFixed(2), xPos, yPos);
+        doc.text(price.toFixed(2), xPos, textY);
         xPos += colWidths.price;
-        doc.text(costTotal.toFixed(2), xPos, yPos);
+        doc.text(costTotal.toFixed(2), xPos, textY);
         xPos += colWidths.costTotal;
-        doc.text(priceTotal.toFixed(2), xPos, yPos);
+        doc.text(priceTotal.toFixed(2), xPos, textY);
 
-        yPos += 7;
+        yPos += rowHeight;
 
-        // Línea separadora
-        if (index < appData.products.length - 1) {
-            doc.setDrawColor(220, 220, 220);
-            doc.line(margin, yPos - 2, pageWidth - margin, yPos - 2);
-        }
+        // Línea separadora al final del row
+        doc.setDrawColor(220, 220, 220);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
     });
 
     // Guardar PDF

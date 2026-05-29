@@ -327,6 +327,7 @@ function addPDFDocumentInfo(doc, margin, pageWidth) {
 }
 
 function addPDFClientInfo(doc, margin, yPos, pageWidth) {
+    doc.setFontSize(9);
     doc.setFont(undefined, 'bold');
     doc.text('CLIENTE:', margin, yPos);
     doc.setFont(undefined, 'normal');

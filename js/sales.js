@@ -696,45 +696,54 @@ function generateSalesPDF() {
             doc.setTextColor(0, 0, 0); // Negro normal
         }
 
+        // Fondo alternado
+        if (index % 2 === 0) {
+            doc.setFillColor(248, 249, 250);
+            doc.rect(margin, yPos, pageWidth - 2 * margin, 8, 'F');
+        }
+
+        // Texto centrado verticalmente en el row (rowHeight = 8)
+        const textY = yPos + 5;
+
         xPos = margin + 2;
-        doc.text(`${index + 1}`, xPos, yPos);
+        doc.text(`${index + 1}`, xPos, textY);
         xPos += colWidths.num;
-        doc.text(sale.number.toString(), xPos, yPos);
+        doc.text(sale.number.toString(), xPos, textY);
         xPos += colWidths.sale;
         
         const clientName = (sale.client.name || sale.client).toUpperCase();
         const clientDisplay = clientName.length > 22 ? clientName.substring(0, 22) + '..' : clientName;
-        doc.text(clientDisplay, xPos, yPos);
+        doc.text(clientDisplay, xPos, textY);
         xPos += colWidths.client;
         
         const vendorName = (sale.seller.name || sale.seller).toUpperCase();
         const vendorDisplay = vendorName.length > 18 ? vendorName.substring(0, 18) + '..' : vendorName;
-        doc.text(vendorDisplay, xPos, yPos);
+        doc.text(vendorDisplay, xPos, textY);
         xPos += colWidths.vendor;
         
-        doc.text(productCount.toString(), xPos + 3, yPos);
+        doc.text(productCount.toString(), xPos + 3, textY);
         xPos += colWidths.products;
         
-        doc.text(`Bs ${saleCost.toFixed(2)}`, xPos, yPos);
+        doc.text(`Bs ${saleCost.toFixed(2)}`, xPos, textY);
         xPos += colWidths.cost;
         
-        doc.text(`Bs ${salePrice.toFixed(2)}`, xPos, yPos);
+        doc.text(`Bs ${salePrice.toFixed(2)}`, xPos, textY);
         xPos += colWidths.price;
         
         const datePart = sale.date.split(',')[0].trim();
-        doc.text(datePart, xPos, yPos);
+        doc.text(datePart, xPos, textY);
         xPos += colWidths.date;
         
         doc.setFont('helvetica', 'bold');
-        doc.text(statusText, xPos, yPos);
+        doc.text(statusText, xPos, textY);
         doc.setFont('helvetica', 'normal');
 
-        yPos += 6;
+        yPos += 8;
 
-        // Línea separadora sutil
-        doc.setDrawColor(230, 230, 230);
+        // Línea separadora al final del row
+        doc.setDrawColor(220, 220, 220);
         doc.setLineWidth(0.1);
-        doc.line(margin, yPos - 1, pageWidth - margin, yPos - 1);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
         
         doc.setTextColor(0, 0, 0); // Resetear color
     });

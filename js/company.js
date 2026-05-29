@@ -5,16 +5,27 @@ function openCompanySettings() {
     document.getElementById('modalCompanySlogan').value = appData.company.slogan || '';
     document.getElementById('modalCompanyNit').value = appData.company.nit || '';
     
+    const preview = document.getElementById('logoPreview');
+    const placeholder = document.getElementById('logoPlaceholder');
+    const removeBtn = document.getElementById('logoRemoveBtn');
     if (appData.company.logo) {
-        document.getElementById('logoPreview').src = appData.company.logo;
-        document.getElementById('logoPreview').style.display = 'block';
+        preview.src = appData.company.logo;
+        preview.style.display = 'block';
+        if (placeholder) placeholder.style.display = 'none';
+        if (removeBtn) removeBtn.style.display = 'block';
     } else {
-        const preview = document.getElementById('logoPreview');
         preview.style.display = 'none';
         preview.src = '';
+        if (placeholder) placeholder.style.display = 'block';
+        if (removeBtn) removeBtn.style.display = 'none';
     }
-    document.getElementById('modalPdfHeaderBg').value   = appData.company.pdfHeaderBgColor   || '#7037CD';
-    document.getElementById('modalPdfHeaderText').value = appData.company.pdfHeaderTextColor || '#FFFFFF';
+    const bg = appData.company.pdfHeaderBgColor || '#7037CD';
+    const txt = appData.company.pdfHeaderTextColor || '#FFFFFF';
+    document.getElementById('modalPdfHeaderBg').value = bg;
+    document.getElementById('modalPdfHeaderText').value = txt;
+    updatePdfPreview();
+    // Reset to first tab
+    switchSettingsTab('empresa', document.querySelector('.settings-tab'));
     renderModalInventoryList();
     openModal('companyModal');
 }
@@ -38,10 +49,18 @@ function handleLogoUpload(event) {
                     window.compressImage(convertedImage, 200, 200, (compressedImage) => {
                         document.getElementById('logoPreview').src = compressedImage;
                         document.getElementById('logoPreview').style.display = 'block';
+                        const ph = document.getElementById('logoPlaceholder');
+                        if (ph) ph.style.display = 'none';
+                        const rb = document.getElementById('logoRemoveBtn');
+                        if (rb) rb.style.display = 'block';
                     });
                 } else {
                     document.getElementById('logoPreview').src = convertedImage;
                     document.getElementById('logoPreview').style.display = 'block';
+                    const ph = document.getElementById('logoPlaceholder');
+                    if (ph) ph.style.display = 'none';
+                    const rb = document.getElementById('logoRemoveBtn');
+                    if (rb) rb.style.display = 'block';
                 }
             });
         };
@@ -198,6 +217,43 @@ window.saveCompanySettings = saveCompanySettings;
 window.convertTransparentToWhite = convertTransparentToWhite;
 window.addInventoryFromModal = addInventoryFromModal;
 window.deleteInventoryFromModal = deleteInventoryFromModal;
+
+// ==================== SETTINGS TABS ====================
+function switchSettingsTab(tabId, clickedBtn) {
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('settingsTab-' + tabId);
+    if (panel) panel.classList.add('active');
+    if (clickedBtn) clickedBtn.classList.add('active');
+}
+
+function updatePdfPreview() {
+    const bg = document.getElementById('modalPdfHeaderBg').value;
+    const txt = document.getElementById('modalPdfHeaderText').value;
+    const preview = document.getElementById('pdfHeaderPreview');
+    const bgLabel = document.getElementById('bgColorLabel');
+    const txtLabel = document.getElementById('textColorLabel');
+    if (preview) { preview.style.background = bg; preview.style.color = txt; }
+    if (bgLabel) bgLabel.textContent = bg;
+    if (txtLabel) txtLabel.textContent = txt;
+}
+
+function removeLogo() {
+    const preview = document.getElementById('logoPreview');
+    const placeholder = document.getElementById('logoPlaceholder');
+    const removeBtn = document.getElementById('logoRemoveBtn');
+    const fileInput = document.getElementById('logoInput');
+    preview.src = '';
+    preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'block';
+    if (removeBtn) removeBtn.style.display = 'none';
+    if (fileInput) fileInput.value = '';
+    appData.company.logo = null;
+}
+
+window.switchSettingsTab = switchSettingsTab;
+window.updatePdfPreview = updatePdfPreview;
+window.removeLogo = removeLogo;
 window.startRenameInventory = startRenameInventory;
 window.cancelRenameInventory = cancelRenameInventory;
 window.confirmRenameInventory = confirmRenameInventory;
