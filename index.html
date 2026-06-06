@@ -882,8 +882,15 @@
                         </select>
                     </div>
                 </div>
-                <!-- Fila 2: Totales centrados -->
-                <div style="display:flex; justify-content:center; gap:24px; flex-wrap:wrap; align-items:center;">
+                <!-- Fila 2: Total Gastos (solo cuando filtro = Gastos) -->
+                <div id="gastosTotalsRow" style="display:none; justify-content:center; gap:24px; flex-wrap:wrap; align-items:center;">
+                    <div style="text-align:center; min-width:120px;">
+                        <div style="font-size:13px; color:#666;">Total Gastos</div>
+                        <div style="font-size:20px; font-weight:bold; color:#e67e22;" id="totalGastosOnly">Bs 0.00</div>
+                    </div>
+                </div>
+                <!-- Fila 2: Totales centrados (solo cuando filtro = Ventas) -->
+                <div id="salesTotalsRow" style="display:flex; justify-content:center; gap:24px; flex-wrap:wrap; align-items:center;">
                     <div style="text-align:center; min-width:85px;" id="cardCostoTotalSales">
                         <div style="font-size:13px; color:#666;">Costo Total</div>
                         <div style="font-size:20px; font-weight:bold; color:#e74c3c;" id="totalCostSales">Bs 0.00</div>
@@ -891,10 +898,6 @@
                     <div style="text-align:center; min-width:85px;">
                         <div style="font-size:13px; color:#666;">Precio Total</div>
                         <div style="font-size:20px; font-weight:bold; color:#27ae60;" id="totalPriceSales">Bs 0.00</div>
-                    </div>
-                    <div style="text-align:center; min-width:85px;">
-                        <div style="font-size:13px; color:#666;">Total Gastos</div>
-                        <div style="font-size:20px; font-weight:bold; color:#e67e22;" id="totalGastosSales">Bs 0.00</div>
                     </div>
                     <div style="text-align:center; min-width:105px;" id="cardGananciaLiquidaSales">
                         <div style="font-size:13px; color:#666;">Ganancia L&#xED;quida</div>

@@ -2,7 +2,7 @@
 
 let estadisticasCity = null;
 let estadisticasYear = new Date().getFullYear();
-let estadisticasMonth = null;
+let estadisticasMonth = new Date().getMonth() + 1;
 let estadisticasVendedor = null;
 const chartInstances = {};
 
