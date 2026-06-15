@@ -377,7 +377,7 @@ function renderGastosTable(gastos) {
 
 function updateSalesTotals(sales, totals, paymentTotals) {
     const [totalCost, totalPrice, totalGastos] = totals;
-    const gananciaLiquida = (totalPrice || 0) - (totalCost || 0);
+    const gananciaLiquida = (totalPrice || 0) - (totalCost || 0) - (totalGastos || 0);
 
     const totalsRow = document.getElementById('salesTotalsRow');
     if (totalsRow) totalsRow.style.display = selectedSalesOperation === 'ventas' ? 'flex' : 'none';
@@ -385,7 +385,7 @@ function updateSalesTotals(sales, totals, paymentTotals) {
     const gastosTotalsRow = document.getElementById('gastosTotalsRow');
     if (gastosTotalsRow) gastosTotalsRow.style.display = selectedSalesOperation === 'gastos' ? 'flex' : 'none';
     const gastosOnlyEl = document.getElementById('totalGastosOnly');
-    if (gastosOnlyEl) gastosOnlyEl.textContent = 'Bs ' + (totalGastos || 0).toFixed(2);
+    if (gastosOnlyEl) gastosOnlyEl.textContent = `Bs ${(totalGastos || 0).toFixed(2)}`;
 
     const costEl = document.getElementById('totalCostSales');
     const priceEl = document.getElementById('totalPriceSales');
@@ -997,6 +997,7 @@ function viewSalePDF(saleId) {
             alert('Error: jsPDF no está cargado');
             return;
         }
+        
         const doc = new jsPDF();
         const pageWidth  = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
@@ -1082,6 +1083,265 @@ function viewSalePDF(saleId) {
         appData.currentSaleNumbers    = savedSaleNumbers;
         if (dateInput) dateInput.value = savedDate;
         if (pmEl) pmEl.value = savedPm;
+    }
+}
+
+// ==================== FUNCIONES MENU DESPLEGABLE ====================
+        } catch (e) {}
+    }
+
+    const infoX = margin + (company.logo ? 35 : 0);
+    doc.setFontSize(18);
+    doc.setFont(undefined, 'bold');
+    doc.text((company.name || '').toUpperCase(), infoX, yPos + 6);
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'italic');
+    doc.text((company.slogan || '').toUpperCase(), infoX, yPos + 13);
+
+    if (company.nit) {
+        doc.setFont(undefined, 'normal');
+        doc.text('NIT: ' + company.nit.toUpperCase(), infoX, yPos + 20);
+    }
+
+    let headerHeight = company.logo ? (company.nit ? 30 : 28) : (company.nit ? 24 : 12);
+    yPos += headerHeight;
+
+    // Tipo de documento y número
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'bold');
+    doc.text(docTitle, pageWidth - margin, 20, { align: 'right' });
+    doc.setFontSize(12);
+    doc.text('Nº ' + sale.number, pageWidth - margin, 27, { align: 'right' });
+    doc.setFontSize(10);
+    doc.text('Fecha: ' + sale.date, pageWidth - margin, 34, { align: 'right' });
+
+    // Ciudad
+    if (sale.city) {
+        const inventory = appData.inventories.find(inv => inv.id === sale.city);
+        const cityName = inventory ? inventory.name.toUpperCase() : sale.city.toUpperCase();
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'bold');
+        doc.text(cityName, pageWidth - margin, 41, { align: 'right' });
+    }
+
+    // Línea separadora
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 8;
+
+    // Cliente
+    doc.setFont(undefined, 'bold');
+    doc.text('CLIENTE:', margin, yPos);
+    doc.setFont(undefined, 'normal');
+    doc.text((client.name || '').toUpperCase(), margin + 25, yPos);
+    
+    if (client.ci) {
+        doc.setFont(undefined, 'bold');
+        const ciNitText = 'CI/NIT: ';
+        const ciValue = client.ci.toUpperCase();
+        const ciNitWidth = doc.getTextWidth(ciNitText);
+        doc.text(ciNitText, pageWidth - margin - doc.getTextWidth(ciValue) - ciNitWidth, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(ciValue, pageWidth - margin, yPos, { align: 'right' });
+    }
+    yPos += 6;
+
+    if (client.company) {
+        doc.setFont(undefined, 'bold');
+        doc.text('Empresa:', margin, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(client.company.toUpperCase(), margin + 25, yPos);
+        yPos += 6;
+    }
+
+    if (client.phone) {
+        doc.setFont(undefined, 'bold');
+        doc.text('Teléfono:', margin, yPos);
+        doc.setFont(undefined, 'normal');
+        doc.text(client.phone.toUpperCase(), margin + 25, yPos);
+        yPos += 6;
+    }
+
+    yPos += 3;
+
+    // Vendedor
+    doc.setFont(undefined, 'bold');
+    doc.text('VENDEDOR:', margin, yPos);
+    doc.setFont(undefined, 'normal');
+    doc.text((seller.name || '').toUpperCase(), margin + 25, yPos);
+    if (seller.phone) {
+        doc.text('Tel: ' + seller.phone.toUpperCase(), margin + 80, yPos);
+    }
+    yPos += 8;
+
+    // Tabla de productos
+    doc.setFont(undefined, 'bold');
+    doc.setFillColor(112, 55, 205);
+    doc.rect(margin, yPos, pageWidth - 2 * margin, 7, 'FD');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.text('#', margin + 2, yPos + 5);
+    doc.text('Código', margin + 8, yPos + 5);
+    doc.text('IMG', margin + 26, yPos + 5);
+    doc.text('Descripción', margin + 52, yPos + 5);
+    doc.text('Cant.', margin + 108, yPos + 5);
+    doc.text('P.Unit.', margin + 122, yPos + 5);
+    doc.text('Desc.', margin + 147, yPos + 5);
+    doc.text('Subtotal', pageWidth - margin - 2, yPos + 5, { align: 'right' });
+    
+    yPos += 10;
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'normal');
+
+    const tableLeft = margin;
+    const tableRight = pageWidth - margin;
+    let subtotal = 0;
+    let totalDiscount = 0;
+
+    items.forEach((item, idx) => {
+        if (yPos > pageHeight - 50) {
+            doc.addPage();
+            yPos = margin + 20;
+        }
+
+        const itemSubtotal = item.price * item.quantity;
+        const itemDiscount = item.discountType === '%' ? 
+            (itemSubtotal * item.discount / 100) : 
+            item.discount;
+        const itemTotal = itemSubtotal - itemDiscount;
+
+        subtotal += itemSubtotal;
+        totalDiscount += itemDiscount;
+
+        // Acceder a los datos del producto (puede estar en item.product o directamente en item)
+        const product = item.product || item;
+        const productCode = (product.code || '').toUpperCase();
+        const productDescription = (product.description || '').toUpperCase();
+        const productImage = product.image || null;
+
+        // Procesar descripción con splitTextToSize
+        const descLines = doc.splitTextToSize(productDescription, 56);
+        const rowHeight = Math.max(10, descLines.length * 5, productImage ? 28 : 10);
+        const textYCenter = yPos + (rowHeight / 2);
+
+        // Número y código
+        doc.text(String(idx + 1), margin + 2, textYCenter);
+        doc.text(productCode || '-', margin + 8, textYCenter);
+
+        // Imagen del producto
+        if (productImage) {
+            try {
+                const imgHeight = 24;
+                const imgY = yPos + (rowHeight / 2) - (imgHeight / 2) - 2;
+                doc.addImage(productImage, 'PNG', margin + 26, imgY, 24, imgHeight);
+            } catch (e) {
+                // Imagen no disponible
+            }
+        }
+
+        // Descripción (centrada verticalmente)
+        const descHeight = descLines.length * 5;
+        const descYStart = yPos + (rowHeight / 2) - (descHeight / 2) + 2;
+        doc.text(descLines, margin + 52, descYStart);
+
+        // Cantidad, precio, descuento y total
+        doc.text(String(item.quantity), margin + 108, textYCenter);
+        doc.text(`Bs ${item.price.toFixed(2)}`, margin + 122, textYCenter);
+        
+        const discountText = item.discountType === '%' ? 
+            `${item.discount}%` : 
+            `Bs ${item.discount.toFixed(2)}`;
+        doc.text(discountText, margin + 147, textYCenter);
+        doc.text(`Bs ${itemTotal.toFixed(2)}`, pageWidth - margin - 2, textYCenter, { align: 'right' });
+
+        // Líneas de la tabla
+        doc.setDrawColor(200, 200, 200);
+        doc.line(tableLeft, yPos + rowHeight, tableRight, yPos + rowHeight);
+        doc.line(tableLeft, yPos, tableLeft, yPos + rowHeight);
+        doc.line(tableRight, yPos, tableRight, yPos + rowHeight);
+        
+        // Líneas verticales entre columnas
+        doc.line(margin + 6, yPos, margin + 6, yPos + rowHeight);
+        doc.line(margin + 25, yPos, margin + 25, yPos + rowHeight);
+        doc.line(margin + 51, yPos, margin + 51, yPos + rowHeight);
+        doc.line(margin + 107, yPos, margin + 107, yPos + rowHeight);
+        doc.line(margin + 120, yPos, margin + 120, yPos + rowHeight);
+        doc.line(margin + 145, yPos, margin + 145, yPos + rowHeight);
+        doc.line(margin + 160, yPos, margin + 160, yPos + rowHeight);
+
+        yPos += rowHeight;
+    });
+
+    // Borde final de la tabla
+    doc.setDrawColor(0, 0, 0);
+    doc.line(tableLeft, yPos, tableRight, yPos);
+
+    // Totales
+    yPos += 8;
+
+    const totalsX = pageWidth - margin - 50;
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+    doc.text('Subtotal:', totalsX, yPos);
+    doc.text(`Bs ${subtotal.toFixed(2)}`, pageWidth - margin - 2, yPos, { align: 'right' });
+    yPos += 6;
+
+    doc.text('Descuento:', totalsX, yPos);
+    doc.text(`Bs ${totalDiscount.toFixed(2)}`, pageWidth - margin - 2, yPos, { align: 'right' });
+    yPos += 8;
+
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(12);
+    doc.text('TOTAL:', totalsX, yPos);
+    doc.text(`Bs ${sale.total.toFixed(2)}`, pageWidth - margin - 2, yPos, { align: 'right' });
+
+    // Términos y condiciones
+    if (sale.terms && sale.terms.length > 0) {
+        yPos += 12;
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        doc.text('Términos y Condiciones:', margin, yPos);
+        yPos += 6;
+
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(9);
+        sale.terms.forEach((term, idx) => {
+            if (term && term.trim()) {
+                doc.text(`${idx + 1}. ${term}`, margin + 3, yPos);
+                yPos += 5;
+            }
+        });
+    }
+
+    // ===== MARCA DE AGUA (dibujada AL FINAL para quedar ENCIMA de imágenes y contenido) =====
+    if (sale.cancelled === true || sale.invoiced === true) {
+        const wmText = sale.cancelled === true ? 'ANULADO' : 'FACTURADO';
+        const wmColorR = sale.cancelled === true ? 220 : 30;
+        const wmColorG = sale.cancelled === true ? 30 : 160;
+        const wmColorB = 30;
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let p = 1; p <= totalPages; p++) {
+            doc.setPage(p);
+            doc.saveGraphicsState();
+            try {
+                const gState = new JsPDFGState({ opacity: 0.3 });
+                doc.setGState(gState);
+            } catch (e) { /* GState no disponible */ }
+            doc.setTextColor(wmColorR, wmColorG, wmColorB);
+            doc.setFontSize(70);
+            doc.setFont(undefined, 'bold');
+            doc.text(wmText, pageWidth / 2 + 20, pageHeight / 2, { align: 'center', angle: 45 });
+            doc.restoreGraphicsState();
+            doc.setTextColor(0, 0, 0);
+        }
+    }
+
+    const saveFileName = sale.fileName || `${docTitle.replace(/ /g, '_')}_${sale.number}.pdf`;
+    doc.save(saveFileName);
+    
+    } catch (error) {
+        alert('Error al generar el PDF: ' + error.message);
     }
 }
 
